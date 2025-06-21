@@ -1,4 +1,4 @@
-package com.rifqy.potofolio.job_tracker.common;
+package com.rifqy.potofolio.job_tracker.common.configuration;
 
 import org.springframework.context.annotation.Configuration;
 

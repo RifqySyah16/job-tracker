@@ -1,4 +1,4 @@
-package com.rifqy.potofolio.job_tracker.common;
+package com.rifqy.potofolio.job_tracker.common.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,7 @@ public class SwaggerConfiguration {
     @Bean
     OpenAPI app() {
         Info info = new Info();
-        info.setTitle("Ecorecycle");
+        info.setTitle("Job Application");
         info.description("Data Station");
         info.setVersion("1.0.0");
 

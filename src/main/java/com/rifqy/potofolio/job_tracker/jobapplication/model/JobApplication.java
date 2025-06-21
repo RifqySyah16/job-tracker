@@ -10,6 +10,8 @@ import com.rifqy.potofolio.job_tracker.applicationuser.model.dto.RegisterationRe
 import com.rifqy.potofolio.job_tracker.jobapplication.model.dto.JobApplicationResponseDTO;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -42,6 +44,7 @@ public class JobApplication {
     @UpdateTimestamp
     private Timestamp updatedAt;
 
+    @Enumerated(EnumType.STRING)
     private JobStatus jobStatus;
 
     @ManyToOne
@@ -55,6 +58,8 @@ public class JobApplication {
                 .id(this.id)
                 .companyName(this.companyName)
                 .position(this.position)
+                .createdAt(this.createdAt)
+                .updatedAt(this.updatedAt)
                 .jobStatus(this.jobStatus)
                 .registerationResponseDTO(registerationResponseDTO)
                 .build();

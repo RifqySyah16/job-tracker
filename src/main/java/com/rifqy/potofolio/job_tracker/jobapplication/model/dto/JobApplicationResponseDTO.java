@@ -2,7 +2,7 @@ package com.rifqy.potofolio.job_tracker.jobapplication.model.dto;
 
 import java.sql.Timestamp;
 
-import com.rifqy.potofolio.job_tracker.applicationuser.model.dto.RegisterationResponseDTO;
+import com.rifqy.potofolio.job_tracker.applicationuser.model.dto.ApplicationUserJobResponseDTO;
 import com.rifqy.potofolio.job_tracker.jobapplication.model.JobStatus;
 
 import lombok.AllArgsConstructor;
@@ -29,5 +29,5 @@ public class JobApplicationResponseDTO {
 
     private JobStatus jobStatus;
 
-    private RegisterationResponseDTO registerationResponseDTO;
+    private ApplicationUserJobResponseDTO applicationUserJobResponseDTO;
 }

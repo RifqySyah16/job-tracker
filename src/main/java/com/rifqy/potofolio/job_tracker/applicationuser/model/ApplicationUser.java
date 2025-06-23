@@ -1,5 +1,6 @@
 package com.rifqy.potofolio.job_tracker.applicationuser.model;
 
+import com.rifqy.potofolio.job_tracker.applicationuser.model.dto.ApplicationUserJobResponseDTO;
 import com.rifqy.potofolio.job_tracker.applicationuser.model.dto.RegisterationResponseDTO;
 
 import jakarta.persistence.Entity;
@@ -38,6 +39,14 @@ public class ApplicationUser {
                 .email(this.email)
                 .username(this.username)
                 .password(this.password)
+                .build();
+    }
+
+    public ApplicationUserJobResponseDTO convertToJobResponse() {
+        return ApplicationUserJobResponseDTO.builder()
+                .id(this.id)
+                .name(this.name)
+                .username(this.username)
                 .build();
     }
 }

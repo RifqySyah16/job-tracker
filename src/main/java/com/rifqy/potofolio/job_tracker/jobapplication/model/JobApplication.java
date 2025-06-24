@@ -6,7 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.rifqy.potofolio.job_tracker.applicationuser.model.ApplicationUser;
-import com.rifqy.potofolio.job_tracker.applicationuser.model.dto.RegisterationResponseDTO;
+import com.rifqy.potofolio.job_tracker.applicationuser.model.dto.ApplicationUserJobResponseDTO;
 import com.rifqy.potofolio.job_tracker.jobapplication.model.dto.JobApplicationResponseDTO;
 
 import jakarta.persistence.Entity;
@@ -52,7 +52,7 @@ public class JobApplication {
     private ApplicationUser applicationUser;
 
     public JobApplicationResponseDTO convertToResponse() {
-        RegisterationResponseDTO registerationResponseDTO = this.applicationUser.convertToResponse();
+        ApplicationUserJobResponseDTO applicationUserJobResponseDTO = this.applicationUser.convertToJobResponse();
 
         return JobApplicationResponseDTO.builder()
                 .id(this.id)
@@ -61,7 +61,7 @@ public class JobApplication {
                 .createdAt(this.createdAt)
                 .updatedAt(this.updatedAt)
                 .jobStatus(this.jobStatus)
-                .registerationResponseDTO(registerationResponseDTO)
+                .applicationUserJobResponseDTO(applicationUserJobResponseDTO)
                 .build();
     }
 }

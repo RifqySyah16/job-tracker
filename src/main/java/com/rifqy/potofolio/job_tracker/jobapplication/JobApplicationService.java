@@ -21,27 +21,25 @@ public class JobApplicationService {
 
     public Page<JobApplication> getAll(Long userId, Optional<JobStatus> optionalJobStatus, Pageable pageable) {
         if (optionalJobStatus.isPresent()) {
-            return this.jobApplicationRepository.findAllByApplicationUserAndJobStatusContainsIgnoreCase(userId, optionalJobStatus.get(),
-                    pageable);
+            return this.jobApplicationRepository.findAllByApplicationUserIdAndJobStatusContainsIgnoreCase(userId,
+                    optionalJobStatus.get(),pageable);
         }
 
-        return this.jobApplicationRepository.findAll(pageable);
+        return this.jobApplicationRepository.findAllByApplicationUserId(userId, pageable);
     }
 
     public JobApplication getOne(Long userId, Long id) {
-        JobApplication jobApplication = this.jobApplicationRepository.findById(id)
-                .orElseThrow(() -> new JobApplicationNotFoundException("Job application not found"));
-        this.validationUserById(jobApplication, userId);
+        this.validationUserById(userId);
 
-        return jobApplication;
+        return this.jobApplicationRepository.findByIdAndApplicationUserId(id, userId).orElseThrow(() -> new JobApplicationNotFoundException("Job application not found"));
     }
 
     public JobApplication create(Long userId, JobApplication newJobApplication) {
-        this.validationUserById(newJobApplication, userId);
+        this.validationUserById(userId);
 
         ApplicationUser existingApplicationUser = this.applicationUserService.getOne(userId);
         newJobApplication.setApplicationUser(existingApplicationUser);
-        
+
         return this.jobApplicationRepository.save(newJobApplication);
     }
 
@@ -57,9 +55,9 @@ public class JobApplicationService {
         this.jobApplicationRepository.deleteById(existingJobApplication.getId());
     }
 
-    private void validationUserById(JobApplication jobApplication, Long userId) {
-        if (jobApplication.getApplicationUser().getId().equals(userId)) {
-            throw new AccessJobApplicationDeniedException("User cannot add job application for another user");
+    private void validationUserById(Long userId) {
+        if (userId == null) {
+            throw new AccessJobApplicationDeniedException("Cannot add job application for another user");
         }
     }
 }

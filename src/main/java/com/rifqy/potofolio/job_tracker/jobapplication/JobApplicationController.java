@@ -45,9 +45,9 @@ public class JobApplicationController {
         
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Long userId = userPrincipal.getId();
-
+        
         Sort sort = Sort.by(Sort.Direction.valueOf(sortString), orderBy);
-        Pageable pageable = PageRequest.of(page - 1, limit, sort);  
+        Pageable pageable = PageRequest.of(page - 1, limit, sort);
         Page<JobApplication> pageJobApplication = this.jobApplicationService.getAll(userId, optionalJobStatus, pageable);
         Page<JobApplicationResponseDTO> jobApplicationResponseDTOs = pageJobApplication.map(JobApplication::convertToResponse);
 
@@ -58,7 +58,7 @@ public class JobApplicationController {
     public ResponseEntity<JobApplicationResponseDTO> getOne(@PathVariable("id") Long id, Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Long userId = userPrincipal.getId();
-
+        
         JobApplication jobApplication = this.jobApplicationService.getOne(userId, id);
         JobApplicationResponseDTO jobApplicationResponseDTO = jobApplication.convertToResponse();
 
@@ -69,7 +69,7 @@ public class JobApplicationController {
     public ResponseEntity<JobApplicationResponseDTO> create(@RequestBody @Valid JobApplicationRequestDTO jobApplicationRequestDTO, Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Long userId = userPrincipal.getId();
-
+        
         JobApplication newJobApplication = jobApplicationRequestDTO.convertToEntity();
 
         JobApplication savedJobApplication = this.jobApplicationService.create(userId, newJobApplication);
@@ -95,7 +95,7 @@ public class JobApplicationController {
     public ResponseEntity<Void> delete(@PathVariable("id") Long id, Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Long userId = userPrincipal.getId();
-
+        
         this.jobApplicationService.delete(userId, id);
 
         return ResponseEntity.ok().build();

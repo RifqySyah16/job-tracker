@@ -1,5 +1,6 @@
 package com.rifqy.potofolio.job_tracker.jobapplication;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -17,5 +18,7 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
     Page<JobApplication> findAllByApplicationUserId(Long userId, Pageable pageable);
 
     Optional<JobApplication> findByIdAndApplicationUserId(Long id, Long userId);
+
+    List<JobApplication> findAllByApplicationUserId(Long userId);
 
 }

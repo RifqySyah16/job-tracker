@@ -9,6 +9,7 @@ import com.rifqy.potofolio.job_tracker.jobapplication.model.JobStatus;
 
 public interface JobApplicationRepository extends JpaRepository<JobApplication, Long> {
 
-    Page<JobApplication> findAllByJobStatusContainsIgnoreCase(JobStatus jobStatus, Pageable pageable);
+    Page<JobApplication> findAllByApplicationUserAndJobStatusContainsIgnoreCase(Long userId, JobStatus jobStatus,
+            Pageable pageable);
 
 }

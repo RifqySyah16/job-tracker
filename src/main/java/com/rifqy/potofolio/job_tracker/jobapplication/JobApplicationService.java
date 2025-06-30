@@ -29,7 +29,7 @@ public class JobApplicationService {
     public Page<JobApplication> getAll(Long userId, Optional<JobApplication> optionalName,
             Optional<JobStatus> optionalJobStatus, Pageable pageable) {
         if (optionalName.isPresent()) {
-            return this.jobApplicationRepository.findAllByApplicationUserIdAndJobApplicationPositionContainsIgnoreCase(
+            return this.jobApplicationRepository.findAllByApplicationUserIdAndJobStatusContainsIgnoreCase(
                     userId, optionalName.get(), pageable);
         }
         if (optionalJobStatus.isPresent()) {

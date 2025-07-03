@@ -11,6 +11,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.rifqy.potofolio.job_tracker.applicationuser.ApplicationUserService;
 import com.rifqy.potofolio.job_tracker.authentication.jwt.JwtAuthenticationEntryPoint;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class WebSecurityConfigurer {
         private final ApplicationUserService applicationUserService;
         private final JwtAuthenticationEntryPoint unauthorizedHandler;
+        private final CorsConfigurationSource corsConfigurationSource;
 
         @Bean
         JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter() {
@@ -48,7 +50,7 @@ public class WebSecurityConfigurer {
         @Bean
         SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
                 httpSecurity
-                                .cors(cors -> cors.disable())
+                                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                                 .csrf(csrf -> csrf.disable())
                                 .exceptionHandling(
                                                 exceptionHandling -> exceptionHandling

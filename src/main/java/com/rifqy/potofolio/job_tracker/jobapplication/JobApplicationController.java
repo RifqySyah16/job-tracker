@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rifqy.potofolio.job_tracker.applicationuser.ApplicationUserService;
+import com.rifqy.potofolio.job_tracker.applicationuser.model.ApplicationUser;
 import com.rifqy.potofolio.job_tracker.authentication.model.UserPrincipal;
 import com.rifqy.potofolio.job_tracker.jobapplication.model.JobApplication;
 import com.rifqy.potofolio.job_tracker.jobapplication.model.JobStatus;
@@ -33,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/job-applications")
 public class JobApplicationController {
     private final JobApplicationService jobApplicationService;
+    private final ApplicationUserService applicationUserService;
 
     @GetMapping
     public ResponseEntity<Page<JobApplicationResponseDTO>> getAll(
@@ -70,8 +73,10 @@ public class JobApplicationController {
     public ResponseEntity<JobApplicationResponseDTO> create(@RequestBody @Valid JobApplicationRequestDTO jobApplicationRequestDTO, Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Long userId = userPrincipal.getId();
+
+        ApplicationUser applicationUser = this.applicationUserService.getOne(userId);
         
-        JobApplication newJobApplication = jobApplicationRequestDTO.convertToEntity();
+        JobApplication newJobApplication = jobApplicationRequestDTO.convertToEntity(applicationUser);
 
         JobApplication savedJobApplication = this.jobApplicationService.create(userId, newJobApplication);
         JobApplicationResponseDTO jobApplicationResponseDTO = savedJobApplication.convertToResponse();
@@ -84,7 +89,9 @@ public class JobApplicationController {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Long userId = userPrincipal.getId();
         
-        JobApplication updatedJobApplication = jobApplicationRequestDTO.convertToEntity();
+        ApplicationUser applicationUser = this.applicationUserService.getOne(userId);
+        JobApplication updatedJobApplication = jobApplicationRequestDTO.convertToEntity(applicationUser);
+
         updatedJobApplication.setId(id);
         JobApplication savedJobApplication = this.jobApplicationService.update(userId, updatedJobApplication);
         JobApplicationResponseDTO jobApplicationResponseDTO = savedJobApplication.convertToResponse();

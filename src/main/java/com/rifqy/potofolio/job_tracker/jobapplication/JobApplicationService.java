@@ -26,11 +26,11 @@ public class JobApplicationService {
     private final ApplicationUserService applicationUserService;
     private final JobApplicationRepository jobApplicationRepository;
 
-    public Page<JobApplication> getAll(Long userId, Optional<JobApplication> optionalName,
+    public Page<JobApplication> getAll(Long userId, Optional<JobApplication> optionalPosition,
             Optional<JobStatus> optionalJobStatus, Pageable pageable) {
-        if (optionalName.isPresent()) {
-            return this.jobApplicationRepository.findAllByApplicationUserIdAndJobStatusContainsIgnoreCase(
-                    userId, optionalName.get(), pageable);
+        if (optionalPosition.isPresent()) {
+            return this.jobApplicationRepository.findAllByApplicationUserIdAndPositionContainsIgnoreCase(
+                    userId, optionalPosition.get(), pageable);
         }
         if (optionalJobStatus.isPresent()) {
             return this.jobApplicationRepository.findAllByApplicationUserIdAndJobStatusContainsIgnoreCase(userId,

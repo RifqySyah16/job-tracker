@@ -22,5 +22,8 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
         List<JobApplication> findAllByApplicationUserId(Long userId);
 
         Page<JobApplication> findAllByApplicationUserIdAndPositionContainsIgnoreCase(Long userId,
-                        JobApplication jobApplication, Pageable pageable);
+                        String jobApplication, Pageable pageable);
+
+        Page<JobApplication> findAllByApplicationUserIdAndCompanyNameContainsIgnoreCase(Long userId, String companyName,
+                        Pageable pageable);
 }

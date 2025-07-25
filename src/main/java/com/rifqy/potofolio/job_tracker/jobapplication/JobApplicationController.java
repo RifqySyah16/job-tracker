@@ -40,7 +40,8 @@ public class JobApplicationController {
     @GetMapping
     public ResponseEntity<Page<JobApplicationResponseDTO>> getAll(
             Authentication authentication,
-            @RequestParam(value = "name") Optional<JobApplication> optionalPosistion,
+            @RequestParam(value = "position") Optional<String> optionalPosistion,
+            @RequestParam(value = "company_name") Optional<String> optionalCompanyName,
             @RequestParam(value = "category", required = false) Optional<JobStatus> optionalJobStatus,
             @RequestParam(value = "sort", defaultValue = "ASC") String sortString,
             @RequestParam(value = "order_by", defaultValue = "id") String orderBy,
@@ -52,7 +53,7 @@ public class JobApplicationController {
         
         Sort sort = Sort.by(Sort.Direction.valueOf(sortString), orderBy);
         Pageable pageable = PageRequest.of(page - 1, limit, sort);
-        Page<JobApplication> pageJobApplication = this.jobApplicationService.getAll(userId, optionalPosistion, optionalJobStatus, pageable);
+        Page<JobApplication> pageJobApplication = this.jobApplicationService.getAll(userId, optionalPosistion, optionalCompanyName, optionalJobStatus, pageable);
         Page<JobApplicationResponseDTO> jobApplicationResponseDTOs = pageJobApplication.map(JobApplication::convertToResponse);
 
         return ResponseEntity.ok(jobApplicationResponseDTOs);

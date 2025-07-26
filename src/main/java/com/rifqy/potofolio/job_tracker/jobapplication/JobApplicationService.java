@@ -45,10 +45,6 @@ public class JobApplicationService {
         ApplicationUser existingApplicationUser = this.applicationUserService.getOne(userId);
         newJobApplication.setApplicationUser(existingApplicationUser);
 
-        if (newJobApplication.getJobStatus() == null) {
-            newJobApplication.setJobStatus(JobStatus.WAITING_FEEDBACK);
-        }
-
         return this.jobApplicationRepository.save(newJobApplication);
     }
 

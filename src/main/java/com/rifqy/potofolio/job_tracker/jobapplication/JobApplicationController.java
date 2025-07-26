@@ -1,11 +1,12 @@
 package com.rifqy.potofolio.job_tracker.jobapplication;
 
-import java.util.Optional;
+import java.time.LocalDate;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,6 +25,7 @@ import com.rifqy.potofolio.job_tracker.applicationuser.model.ApplicationUser;
 import com.rifqy.potofolio.job_tracker.authentication.model.UserPrincipal;
 import com.rifqy.potofolio.job_tracker.jobapplication.model.JobApplication;
 import com.rifqy.potofolio.job_tracker.jobapplication.model.JobStatus;
+import com.rifqy.potofolio.job_tracker.jobapplication.model.dto.JobApplicationFilter;
 import com.rifqy.potofolio.job_tracker.jobapplication.model.dto.JobApplicationRequestDTO;
 import com.rifqy.potofolio.job_tracker.jobapplication.model.dto.JobApplicationResponseDTO;
 
@@ -40,30 +42,42 @@ public class JobApplicationController {
     @GetMapping
     public ResponseEntity<Page<JobApplicationResponseDTO>> getAll(
             Authentication authentication,
-            @RequestParam(value = "position") Optional<String> optionalPosistion,
-            @RequestParam(value = "company_name") Optional<String> optionalCompanyName,
-            @RequestParam(value = "category", required = false) Optional<JobStatus> optionalJobStatus,
+            @RequestParam(value = "position", required = false) String position,
+            @RequestParam(value = "company_name", required = false) String companyName,
+            @RequestParam(value = "category", required = false) JobStatus jobStatus,
+            @RequestParam(value = "start_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(value = "end_date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(value = "sort", defaultValue = "ASC") String sortString,
             @RequestParam(value = "order_by", defaultValue = "id") String orderBy,
             @RequestParam(value = "limit", defaultValue = "5") int limit,
             @RequestParam(value = "page", defaultValue = "1") int page) {
-        
+
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Long userId = userPrincipal.getId();
-        
+
+        JobApplicationFilter jobApplicationFilter = JobApplicationFilter.builder()
+                .position(position)
+                .companyName(companyName)
+                .jobStatus(jobStatus)
+                .startDate(startDate)
+                .endDate(endDate)
+                .build();
+
         Sort sort = Sort.by(Sort.Direction.valueOf(sortString), orderBy);
         Pageable pageable = PageRequest.of(page - 1, limit, sort);
-        Page<JobApplication> pageJobApplication = this.jobApplicationService.getAll(userId, optionalPosistion, optionalCompanyName, optionalJobStatus, pageable);
-        Page<JobApplicationResponseDTO> jobApplicationResponseDTOs = pageJobApplication.map(JobApplication::convertToResponse);
+        Page<JobApplication> pageJobApplication = this.jobApplicationService.getAll(userId, jobApplicationFilter, pageable);
+        Page<JobApplicationResponseDTO> jobApplicationResponseDTOs = pageJobApplication
+                .map(JobApplication::convertToResponse);
 
         return ResponseEntity.ok(jobApplicationResponseDTOs);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<JobApplicationResponseDTO> getOne(@PathVariable("id") Long id, Authentication authentication) {
+    public ResponseEntity<JobApplicationResponseDTO> getOne(@PathVariable("id") Long id,
+            Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Long userId = userPrincipal.getId();
-        
+
         JobApplication jobApplication = this.jobApplicationService.getOne(userId, id);
         JobApplicationResponseDTO jobApplicationResponseDTO = jobApplication.convertToResponse();
 
@@ -71,12 +85,13 @@ public class JobApplicationController {
     }
 
     @PostMapping
-    public ResponseEntity<JobApplicationResponseDTO> create(@RequestBody @Valid JobApplicationRequestDTO jobApplicationRequestDTO, Authentication authentication) {
+    public ResponseEntity<JobApplicationResponseDTO> create(
+            @RequestBody @Valid JobApplicationRequestDTO jobApplicationRequestDTO, Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Long userId = userPrincipal.getId();
 
         ApplicationUser applicationUser = this.applicationUserService.getOne(userId);
-        
+
         JobApplication newJobApplication = jobApplicationRequestDTO.convertToEntity(applicationUser);
 
         JobApplication savedJobApplication = this.jobApplicationService.create(userId, newJobApplication);
@@ -84,12 +99,13 @@ public class JobApplicationController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(jobApplicationResponseDTO);
     }
-    
+
     @PutMapping("/{id}")
-    public ResponseEntity<JobApplicationResponseDTO> update(@PathVariable("id") Long id, @RequestBody JobApplicationRequestDTO jobApplicationRequestDTO, Authentication authentication) {
+    public ResponseEntity<JobApplicationResponseDTO> update(@PathVariable("id") Long id,
+            @RequestBody JobApplicationRequestDTO jobApplicationRequestDTO, Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Long userId = userPrincipal.getId();
-        
+
         ApplicationUser applicationUser = this.applicationUserService.getOne(userId);
         JobApplication updatedJobApplication = jobApplicationRequestDTO.convertToEntity(applicationUser);
 
@@ -104,7 +120,7 @@ public class JobApplicationController {
     public ResponseEntity<Void> delete(@PathVariable("id") Long id, Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Long userId = userPrincipal.getId();
-        
+
         this.jobApplicationService.delete(userId, id);
 
         return ResponseEntity.ok().build();

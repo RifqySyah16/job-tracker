@@ -2,19 +2,20 @@ package com.rifqy.potofolio.job_tracker.jobapplication;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.rifqy.potofolio.job_tracker.applicationuser.ApplicationUserService;
 import com.rifqy.potofolio.job_tracker.applicationuser.model.ApplicationUser;
 import com.rifqy.potofolio.job_tracker.jobapplication.model.JobApplication;
 import com.rifqy.potofolio.job_tracker.jobapplication.model.JobStatus;
+import com.rifqy.potofolio.job_tracker.jobapplication.model.dto.JobApplicationFilter;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,24 +27,9 @@ public class JobApplicationService {
     private final ApplicationUserService applicationUserService;
     private final JobApplicationRepository jobApplicationRepository;
 
-    public Page<JobApplication> getAll(Long userId, Optional<String> optionalPosition,
-            Optional<String> optionalCompanyName,
-            Optional<JobStatus> optionalJobStatus, Pageable pageable) {
-        if (optionalCompanyName.isPresent()) {
-            return this.jobApplicationRepository.findAllByApplicationUserIdAndCompanyNameContainsIgnoreCase(userId,
-                    optionalCompanyName.get(), pageable);
-        }
-
-        if (optionalPosition.isPresent()) {
-            return this.jobApplicationRepository.findAllByApplicationUserIdAndPositionContainsIgnoreCase(
-                    userId, optionalPosition.get(), pageable);
-        }
-        if (optionalJobStatus.isPresent()) {
-            return this.jobApplicationRepository.findAllByApplicationUserIdAndJobStatusContainsIgnoreCase(userId,
-                    optionalJobStatus.get(), pageable);
-        }
-
-        return this.jobApplicationRepository.findAllByApplicationUserId(userId, pageable);
+    public Page<JobApplication> getAll(Long userId, JobApplicationFilter jobApplicationFilter, Pageable pageable) {
+        Specification<JobApplication> jobSpecification = JobApplicationSpecification.withFilter(userId, jobApplicationFilter);
+        return this.jobApplicationRepository.findAll(jobSpecification, pageable);
     }
 
     public JobApplication getOne(Long userId, Long id) {

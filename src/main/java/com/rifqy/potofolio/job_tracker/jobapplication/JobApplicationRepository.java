@@ -1,29 +1,16 @@
 package com.rifqy.potofolio.job_tracker.jobapplication;
 
+import com.rifqy.potofolio.job_tracker.jobapplication.model.JobApplication;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+public interface JobApplicationRepository 
+        extends JpaRepository<JobApplication, Long>, JpaSpecificationExecutor<JobApplication> {
 
-import com.rifqy.potofolio.job_tracker.jobapplication.model.JobApplication;
-import com.rifqy.potofolio.job_tracker.jobapplication.model.JobStatus;
+    Optional<JobApplication> findByIdAndApplicationUserId(Long id, Long userId);
 
-public interface JobApplicationRepository extends JpaRepository<JobApplication, Long> {
-
-        Page<JobApplication> findAllByApplicationUserIdAndJobStatusContainsIgnoreCase(Long userId, JobStatus jobStatus,
-                        Pageable pageable);
-
-        Page<JobApplication> findAllByApplicationUserId(Long userId, Pageable pageable);
-
-        Optional<JobApplication> findByIdAndApplicationUserId(Long id, Long userId);
-
-        List<JobApplication> findAllByApplicationUserId(Long userId);
-
-        Page<JobApplication> findAllByApplicationUserIdAndPositionContainsIgnoreCase(Long userId,
-                        String jobApplication, Pageable pageable);
-
-        Page<JobApplication> findAllByApplicationUserIdAndCompanyNameContainsIgnoreCase(Long userId, String companyName,
-                        Pageable pageable);
+    List<JobApplication> findAllByApplicationUserId(Long userId);
 }
